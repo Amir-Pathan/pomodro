@@ -1,23 +1,60 @@
 import logo from './logo.svg';
 import './App.css';
+import services from './services';
+import GoogleIcon from '@mui/icons-material/Google';
+import Button from '@mui/material/Button'
+import { useEffect, useState } from 'react';
+import Timer from './timer';
 
 function App() {
+
+  const [isLoggedIn,setIsLoggedIn] = useState(false)
+
+  const [isLoading,setIsLoading] = useState(true)
+
+
+  useEffect(()=>{
+
+    services.auth().then((res)=>{
+      setIsLoggedIn(true)
+      setIsLoading(false)
+    }).catch((err)=>{
+      setIsLoggedIn(false)
+      setIsLoading(false)
+    })
+
+  },[])
+
+  const createAccount = ()=>{
+
+    services.signinWithGoogle().then((res)=>{
+
+      setIsLoggedIn(true)
+
+      setIsLoading(false)
+
+    }).catch((err)=>{
+      setIsLoggedIn(false)
+
+      setIsLoading(false)
+    })
+    
+
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {
+        isLoading?
+          <h1>Loading</h1>
+        :
+        isLoggedIn?
+        <Timer/>
+        :
+        <Button style={{color:'black',marginTop:'50px'}} onClick={createAccount}>
+        Login with {' '} <GoogleIcon/>
+      </Button>
+      }
     </div>
   );
 }
